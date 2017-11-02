@@ -20,7 +20,7 @@ import static submit.SatSolver2.solve;
 
 public class SatSolver2Test {
 //    private static final String INPUT_FILENAME = "/Users/jaelkw/AndroidStudioProjects/java2d/satsolver/src/main/java/com/sampleCNF/largeSat.cnf";
-    static String fileLoc = "/Users/jaelkw/AndroidStudioProjects/java2d/satsolver/src/main/java/com/sampleCNF/largeSat.cnf";
+    static String fileLoc = "/Users/jaelkw/AndroidStudioProjects/java2d/satsolver/src/main/java/com/sampleCNF/s8Sat.cnf";
 
 
     public static void main(String[] args) {

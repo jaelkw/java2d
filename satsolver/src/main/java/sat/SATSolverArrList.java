@@ -32,48 +32,88 @@ public class SATSolverArrList {
             return false;
         }
 
+        int ctr = 0;
+        int len = fm.size();
 
-        int fm_size = fm.size();
-        int outerCounter = 0;
-
-        while(outerCounter < fm_size){
-            if(fm.get(outerCounter).size() == 1) {
-                // Go look at the unit clauses now
-                // iterate through the whole arraylist to find the unit clauses where they exist
-                int clauseVal = fm.get(outerCounter).get(0);
-
-                // Case if the unit clause is negative
-                if(clauseVal < 0) {
-                    int newVal = clauseVal * (-1); // To make it positive
-                    pa.set(newVal - 1, Bool.FALSE); // Note that my fm integers start from 1, but pa starts from index 0.
+        while (ctr < len) {
+            if (fm.get(ctr).size() == 1) {
+                if (fm.get(ctr).get(0) < 0) {
+                    int temp = fm.get(ctr).get(0) * (-1);
+                    pa.set(temp - 1, Bool.FALSE);
                 } else {
-                    // Unit clause is not negative, so can keep it as it is
-                    pa.set(clauseVal - 1 , Bool.TRUE);
+                    pa.set(fm.get(ctr).get(0) - 1, Bool.TRUE);
                 }
+                int variab = fm.get(ctr).get(0);
+                ArrayList<ArrayList<Integer>> toDel = new ArrayList<>();
+                for (int i = 0; i < fm.size(); i++) {
+                    if (fm.get(i).contains(variab)) {
+                        // System.out.println("Deleting clause: "+fm.get(i));
+                        toDel.add(fm.get(i));
+                    } else if (fm.get(i).contains(-1 * variab)) {
+                        fm.get(i).removeAll(Collections.singleton(variab * -1));
 
-                // Now go remove all the instances of clauses with clauseVal including clauseVal itself (Since our formula is satisfiable if fa goes to null)
-                int innerCounter = 0;
-                while(innerCounter < fm_size) {
-                    // Note, nested loop - potentially can see if can optimize this
-                    if(fm.get(innerCounter).contains(clauseVal)) {
-                        // Remove the entire clause
-                        fm.remove(fm.indexOf(innerCounter));
-                        fm_size -= 1; // keep innerCounter at same pointer since another element is now there, but total size has fallen
-                    } else if (fm.get(innerCounter).contains(clauseVal * (-1))) {
-                        // Remove only the literal, since it's the negative.
-                        fm.get(innerCounter).removeAll(Collections.singleton(clauseVal * (-1)));
-                        innerCounter += 1;
                     }
                 }
+                for (ArrayList<Integer> i : toDel) {
+                    fm.remove(fm.indexOf(i));
+                }
+                ctr = 0;
+                len = fm.size();
+            } else
+                ctr++;
+        }
 
-                outerCounter = 0; // Restart since may have new unit clauses
-            } else {
-                outerCounter += 1; // didnt have any unit clause so go search the next clause
+        for (int i = 0; i < pa.size(); i++) {
+            for (int j = 0; j < fm.size(); j++) {
+                Bool pagetI = pa.get(i);
+                ArrayList<Integer> fmgetJ = fm.get(j);
+                if (pagetI == Bool.UNDEFINED) {
+                    // idk what to do here
+                } else if (pagetI == Bool.TRUE && fmgetJ.contains(i + 1)) { // if
+                    // literal
+                    // is
+                    // true
+                    // &
+                    // clause
+                    // contains
+                    // literal
+                    fm.remove(j); // remove the clause
+                } else if (pagetI == Bool.FALSE && fmgetJ.contains(i + 1)) { // if
+                    // literal
+                    // is
+                    // false
+                    // &
+                    // clause
+                    // contains
+                    // literal
+                    fmgetJ.remove(fmgetJ.indexOf(i + 1)); // remove
+                    // literal
+                } else if (pagetI == Bool.TRUE && fmgetJ.contains((i + 1) * -1)) { // if
+                    // literal
+                    // is
+                    // true
+                    // &
+                    // clause
+                    // contains
+                    // inverse
+                    // of
+                    // literal
+                    fmgetJ.remove(fmgetJ.indexOf((i + 1) * -1));// remove
+                    // negative
+                    // literal
+                } else if (pagetI == Bool.FALSE
+                        && fmgetJ.contains((i + 1) * -1)) { // literal is false
+                    // & clause contains
+                    // inverse of
+                    // literal
+                    fm.remove(j);// remove clause
+                }
             }
         }
 
         // now, choose literal and set it to true. the final part of the algorithm
         int randLiteral = pa.indexOf(Bool.UNDEFINED); // potentially may have better ways of selecting, but just stick with this first
+        System.out.println("Rand literal: " + randLiteral + " // FM: " + fm + " // PA: " + pa);
         pa.set(randLiteral, Bool.TRUE);
 
         // Test if it's all good if Bool.TRUE, so need to create deepcopy first

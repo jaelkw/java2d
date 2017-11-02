@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import static sat.SATSolverArrList.solve;
 
@@ -20,7 +21,7 @@ import static sat.SATSolverArrList.solve;
 public class SatSolverArrListTest {
 
     //    private static final String INPUT_FILENAME = "/Users/jaelkw/AndroidStudioProjects/java2d/satsolver/src/main/java/com/sampleCNF/largeSat.cnf";
-    static String fileLoc = "/Users/jaelkw/AndroidStudioProjects/java2d/satsolver/src/main/java/com/sampleCNF/largeSat.cnf";
+    static String fileLoc = "/Users/jaelkw/AndroidStudioProjects/java2d/satsolver/src/main/java/com/sampleCNF/s8Sat.cnf";
 
 
     public static void main(String[] args) {
@@ -39,6 +40,8 @@ public class SatSolverArrListTest {
             while (reader.hasNext()) { //reading line by line
                 ArrayList<Integer> al = new ArrayList<Integer>();
                 lineS = reader.nextLine().trim().split(" ", -1);
+                System.out.println(Arrays.toString(lineS));
+
                 if (lineS.length > 0) {
                     if (lineS[0].charAt(0) == '-' || lineS[0].charAt(0) >= '0' && lineS[0].charAt(0) <= '9') {
                         for (String pt : lineS) {
